@@ -45,6 +45,12 @@ AIM = {'n': (-1, 0),
        'w': (0, -1),
        'halt': (0,0)}
 
+class RewardEvents:
+    def __init__(self):
+        self.food_eaten = 0
+        self.death_dealt = 0
+        self.was_killed = False
+
 class AntStatus:
     '''Enum type to represent persistent ant status.'''
     UNKNOWN = 0

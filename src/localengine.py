@@ -219,7 +219,7 @@ class LocalEngine:
         self.bots.append((b, bot))
 
     # Runs the game until completion. Parses command line options.
-    def Run(self, argv):
+    def Run(self,run_mode, argv):
 
         # Parse command line options and fail if unsuccessful.
         self.game_opts = self.GetOptions(argv)
@@ -243,14 +243,18 @@ class LocalEngine:
         
         self.InitControls()
         gui.master.lift()
-        gui.mainloop()
-#        if self.game_opts['step_through']:
-#        
-#        else:
-#            while 1: 
-#                gui.update()
-#                if self.RunTurn() == 0:
-#                    break
+        #gui.mainloop()
+        
+        if run_mode == 'step':
+            gui.mainloop()
+        elif run_mode == 'play' or run_mode == 'batch': 
+            while 1: 
+                if run_mode == 'play':
+                    gui.update()
+                if self.RunTurn() == 0:
+                    break
+        else:
+            raise NotImplementedError
         
         print "*"*20
         print "Game Summary"

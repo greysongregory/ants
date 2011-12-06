@@ -8,7 +8,7 @@ import os.path
 from src.antsbot import AntsBot
 from src.worldstate import AIM, AntStatus
 from src.mapgen import SymmetricMap
-from src.features import FeatureExtractor, MovingTowardsFeatures
+from src.features import FeatureExtractor, BasicFeatures
 from src.state import GlobalState
                
 class ValueBot(AntsBot):
@@ -157,7 +157,7 @@ if __name__ == '__main__':
         # Set completely random weights
         b = ValueBot(engine.GetWorld(), load_file=None)
         engine.AddBot(b)        
-        b.set_features(MovingTowardsFeatures())
+        b.set_features(BasicFeatures())
         b.set_weights([random.uniform(-1,1) for i in range (0, b.features.num_features())])
         b.world.L.info("Randomly initialized to:" + str(b))
         

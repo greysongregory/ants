@@ -21,6 +21,7 @@ if __name__ == '__main__':
         botlist = [os.path.basename(s) for s in sys.argv[1:] if s[-3:] == '.py']
         arglist = [sys.argv[0]]+[s for s in sys.argv[1:] if s[-3:] != '.py']
         bots = [__import__(botstr[:-3]).BOT for botstr in botlist]
+        print bots
         
         if len(sys.argv) > 2: # Run LocalEngine version
       
