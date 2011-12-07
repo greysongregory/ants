@@ -87,12 +87,14 @@ class GlobalState:
     
     cutoff = 25   # When to use the lookup table, and when not.
         
-    def __init__(self, world, resolution, visited_cells=10, draw_heatmap=True): 
+    def __init__(self, world, resolution, visited_resolution=10, draw_heatmap=True): 
         self.world = world
         self.lookup_res = resolution
-        self.visited_res = int(min(self.world.height/visited_cells, self.world.width/visited_cells))
+        self.visited_res = visited_resolution
         self.visited = {}
-
+        
+        print "RESOLUTION_________________________________"
+        print resolution
         self.draw_heatmap = True
                 
         self.update()
@@ -175,6 +177,7 @@ class GlobalState:
         direction = worldstate.AIM[action]
         next_loc = [loc[i]+self.visited_res*direction[i] for i in range(0, len(direction))]
         return self.get_visited(next_loc)
+        
 
     def get_visited(self, loc):
         """Returns the number of times this location has been visited.""" 

@@ -11,6 +11,7 @@ from src.mapgen import SymmetricMap
 from src.features import FeatureExtractor, BasicFeatures
 from src.state import GlobalState
                
+FOG = 7
 class ValueBot(AntsBot):
     """ Value function based AntsBot.
 
@@ -32,6 +33,8 @@ class ValueBot(AntsBot):
         self.state = None
         self.features = None
         self.weights = None
+        
+        self.fog = world.viewradius2
         
         # **** NOTE: Disable ant tracking to speed up game playing. 
         self.world.stateless = True
@@ -118,9 +121,10 @@ class ValueBot(AntsBot):
         # Run the routine for each living ant independently.
         next_locations = {}
         
+        print "Dddddddddd"
         # Grid lookup resolution: size 10 squares
         if self.state == None:
-            self.state = GlobalState(self.world, resolution=10)
+            self.state = GlobalState(self.world, resolution=FOG)
         else:
             self.state.update()
         
