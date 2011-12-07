@@ -4,9 +4,15 @@ Created on Dec 6, 2011
 @author: Vin
 '''
 
+'''
+Created on Dec 6, 2011
+
+@author: Vin
+'''
+
 from features import FeatureExtractor
 
-class MyClass(FeatureExtractor):
+class AdvancedFeatures(FeatureExtractor):
     '''
     classdocs
     '''
@@ -34,7 +40,7 @@ class MyClass(FeatureExtractor):
         self.feature_names.append("Closest enemy >4 away")
 
     def __init__(self):
-        FeatureExtractor.__init__(self, {'_type': BasicFeatures.type_name})    
+        FeatureExtractor.__init__(self, {'_type': AdvancedFeatures.type_name})    
                 
     def moving_towards(self, world, loc1, loc2, target):
         """Returns true if loc2 is closer to target than loc1 in manhattan distance."""
