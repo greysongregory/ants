@@ -5,13 +5,14 @@ Created on Oct 19, 2011
 '''
 from src.worldstate import AIM, AntStatus, RewardEvents
 from src.mapgen import SymmetricMap
-from src.features import BasicFeatures, CompositingFeatures
+from src.features import CompositingFeatures, AdvancedFeatures
 from src.state import GlobalState
 from valuebot import ValueBot
 import random
 from src.localengine import LocalEngine
 from greedybot import GreedyBot
 import sys
+import math
 import time
 
 
@@ -23,9 +24,12 @@ EXPLORE_THRESHOLD = 10
 ALPHA_DIVIDER = 5
 DISCOUNT = .6
 PLAY_TYPE = 'play'
+
+
 class QLearnBot(ValueBot):
     
     def __init__(self,world, load_file="save_bots/qbot.json"):
+        self.world = world
         ValueBot.__init__(self,world, load_file)
         self.nturns = 0
     
@@ -49,6 +53,7 @@ class QLearnBot(ValueBot):
         print "reward  "
         print reward
         return reward
+        
     
     def avoid_collisions(self):
         """ 
@@ -60,7 +65,7 @@ class QLearnBot(ValueBot):
                 # Basic collision detection: don't land on the same square as another friendly ant.
                 nextpos = self.world.next_position(ant.location, ant.direction) 
                 if nextpos in next_locations.keys():  
-                    ant.direction = None
+                    ant.direction = 'halt'
                 else:
                     next_locations[nextpos] = ant.ant_id
                         
@@ -73,13 +78,18 @@ class QLearnBot(ValueBot):
         
         # Grid lookup resolution: size 10 squares
         if self.state == None:
-            self.state = GlobalState(self.world, resolution=10)
+            print "setting "
+            print self.world.viewradius2
+            fog = int(math.sqrt(self.world.viewradius2))
+            self.state = GlobalState(self.world, visited_resolution=fog, resolution=fog)
         else:
             self.state.update()
             
         # explore or exploit and update values for every ant that's alive or was just killed
         for ant in self.world.ants:
+            print ant
             if ant.status == AntStatus.ALIVE or ant.previous_reward_events.was_killed:
+                
                 ant.direction = self.explore_and_exploit(ant)
                 
         self.avoid_collisions()
@@ -89,14 +99,13 @@ class QLearnBot(ValueBot):
             ant.prev_features = self.features.extract(self.world, self.state, ant.location, ant.direction)
             ant.prev_value = self.value(self.state,ant.location,ant.direction)
 
-        print self.world.L.info(str(self))
-
     def update_weights(self,alpha,discount,reward,maxval,prevval,features):
         """
             Perform an update of the weights here according to the Q-learning
             weight update rule described in the homework handout.
         """
-        
+        print "DDDDDDD"
+        print alpha
         for i in range(len(self.weights)):
             self.weights[i] += alpha*(reward + discount*maxval - prevval)*features[i]
         
@@ -106,19 +115,23 @@ class QLearnBot(ValueBot):
         Update weights and decide whether to explore or exploit here.  Where all the magic happens.
         YOUR CODE HERE
         '''
+        
+        print "DDDDDDDDDDDD"
 
         actions = self.world.get_passable_directions(ant.location, AIM.keys())
         random.shuffle(actions)
         if len(actions)==0:
-            return None
-        
+            return 'halt'
+        print "DDDDDDDDDDDD"
         # if we have a newborn baby ant, init its rewards and quality fcns
         if 'prev_value' not in ant.__dict__:
+            print ant.__dict__
             ant.prev_value = 0
             ant.previous_reward_events = RewardEvents()
             ant.prev_features = self.features.extract(self.world, self.state, ant.location, actions[0])
+            print ant.__dict__
             return actions[0]
-        
+        print "DDDDDDDDDDDD"
         # step 1, update Q(s,a) based on going from last state, taking
         # the action issued last round, and getting to current state
         R = self.get_reward(ant.previous_reward_events)
@@ -127,7 +140,6 @@ class QLearnBot(ValueBot):
         # number of features, so you don't bounce out of the bowl we're trying
         # to descend via gradient descent
         alpha = float(1) / (len(ant.prev_features)*ALPHA_DIVIDER)
-        print alpha
         # totally greedy default value, future rewards count for nothing, do not want
         discount = DISCOUNT
         
@@ -135,7 +147,7 @@ class QLearnBot(ValueBot):
         # previous state was s.  You can use
         # self.value(self.state,ant.location,action) here
         max_next_value = 0
-        max_next_action = None
+        max_next_action = 'halt'
         for action in actions:
             val = self.value(self.state,ant.location,action)
             if max_next_value < val:
@@ -191,7 +203,7 @@ def run(arg):
     else:
         # init qbot with weights 0
         qbot = QLearnBot(engine.GetWorld(), load_file=None)
-        qbot.set_features(CompositingFeatures(BasicFeatures(), BasicFeatures()))
+        qbot.set_features(CompositingFeatures(AdvancedFeatures(), AdvancedFeatures()))
         qbot.set_weights([0 for j in range (0, qbot.features.num_features())])
         
     # Generate and play on random 30 x 30 map
@@ -206,19 +218,16 @@ def run(arg):
     engine.AddBot(GreedyBot(engine.GetWorld()))
     qbot.ngames = game_number + 1
     
-    print arg + ["--run", "-m", "src/maps/2player/my_random.map"]
-    
     engine.Run(PLAY_TYPE, arg + ["--run", "-m", "src/maps/2player/my_random.map"])
     qbot.save('saved_bots/qbot.json')
     # this is an easy way to look at the weights
-    qbot.save_readable('saved_bots/qbot-game-%d.txt' % game_number)
+    #qbot.save_readable('saved_bots/qbot-game-%d.txt' % game_number)
         
     end_time = time.time()
     print 'training done, delta time = ', end_time-start_time
     
     
 if __name__ == '__main__':
-    print sys.argv
     if len(sys.argv) < 2:
         print 'Missing argument ---'
         print 'Usage: python qlearner.py <game number>'

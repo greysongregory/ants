@@ -5,7 +5,13 @@ Created on Dec 6, 2011
 '''
 
 from features import FeatureExtractor
+from antpathsearch import aStarSearch
+#Constants
+#vin
+EXPLORED_TURNS_MAX = 100
+EXPLORED_TURNS_STEP = 5
 
+FOG = 8
 class AdvancedFeatures(FeatureExtractor):
     '''
     classdocs
@@ -17,7 +23,24 @@ class AdvancedFeatures(FeatureExtractor):
         
         ##------Vin's qualifiers go here----##
         
+        #Change to a*
+        self.feature_names.append("Moving on A* path Closest Enemy")
+        self.feature_names.append("Moving on A* path Towards Closest Food")
+        self.feature_names.append("Moving on A* path Towards Friendly")
+       
+        self.feature_names.append("Friendly adjacent")
+
+        for x in range(1, FOG+1):
+            self.feature_names.append("Closest food "+str(x)+" away")
+        self.feature_names.append("Closest food > "+str(x)+" away")
         
+        for x in range(1, FOG+1):
+            self.feature_names.append("Closest enemy "+str(x)+" away")
+        self.feature_names.append("Closest enemy > "+str(x)+" away")
+        
+        for x in range(EXPLORED_TURNS_STEP, EXPLORED_TURNS_MAX, EXPLORED_TURNS_STEP):
+            self.feature_names.append("Explored "+str(x)+" turns ago");
+        self.feature_names.append("Explored more than"+str(EXPLORED_TURNS_MAX)+" turns ago");
         
         
         
@@ -25,33 +48,10 @@ class AdvancedFeatures(FeatureExtractor):
         
         ##---------Grey's qualifiers here------##
         
-        
-        
-        
-        
-        
-        
-        
-        self.feature_names.append("Moving Towards Closest Enemy")
-        self.feature_names.append("Moving Towards Closest Food")
-        self.feature_names.append("Moving Towards Friendly")
-       
-        self.feature_names.append("Friendly adjacent")
 
-        self.feature_names.append("Closest food 1 away")
-        self.feature_names.append("Closest food 2 away")
-        self.feature_names.append("Closest food 3 away")
-        self.feature_names.append("Closest food 4 away")
-        self.feature_names.append("Closest food > 4 away")
-        
-        self.feature_names.append("Closest enemy 1 away")
-        self.feature_names.append("Closest enemy 2 away")
-        self.feature_names.append("Closest enemy 3 away")
-        self.feature_names.append("Closest enemy 4 away")
-        self.feature_names.append("Closest enemy >4 away")
-
-    def __init__(self):
-        FeatureExtractor.__init__(self, {'_type': AdvancedFeatures.type_name})    
+    def __init__(self, world):
+        FeatureExtractor.__init__(self, {'_type': AdvancedFeatures.type_name}) 
+           
                 
     def moving_towards(self, world, loc1, loc2, target):
         """Returns true if loc2 is closer to target than loc1 in manhattan distance."""
@@ -70,6 +70,7 @@ class AdvancedFeatures(FeatureExtractor):
         else:
             return None
         
+<<<<<<< HEAD
     def extractVinFeatures(self, world, state, loc, action):
         pass
     
@@ -201,6 +202,7 @@ class AdvancedFeatures(FeatureExtractor):
         enemy_loc = self.find_closest(world, loc, state.lookup_nearby_enemy(loc))
         friend_loc = self.find_closest(world, loc, state.lookup_nearby_friendly(loc))
 
+
         next_loc = world.next_position(loc, action)
         world.L.debug("loc: %s, food_loc: %s, enemy_loc: %s, friendly_loc: %s" % (str(loc), str(food_loc), str(enemy_loc), str(friend_loc)))
         # Feature vector        
@@ -222,7 +224,7 @@ class AdvancedFeatures(FeatureExtractor):
         if friend_loc is None:
             f.append(False)
         else:
-            f.append(self.moving_towards(world, loc, next_loc, friend_loc));
+            f.append(self.movingOnAStarPath(world, loc, next_loc, friend_loc));
             
         # adjacent friendly
         if friend_loc is None:
@@ -232,20 +234,36 @@ class AdvancedFeatures(FeatureExtractor):
             
         # closest food {1,2,3,4} away
         if food_loc is None:
-            f += [False]*5
+            f += [False]*FOG+1
         else:
             d_food = world.manhattan_distance(next_loc,food_loc)
-            for k in range(1,5):
+            for k in range(1,FOG+1):
                 f.append(d_food == k)
-            f.append(d_food > 4)
+            f.append(d_food > FOG)
                 
         # closest enemy {1,2,3,4} away
         if enemy_loc is None:
-            f += [False]*5
+            f += [False]*FOG+1
         else:
             d_enemy = world.manhattan_distance(next_loc,enemy_loc)
-            for k in range(1,5):
+            for k in range(1,FOG+1):
                 f.append(d_enemy == k)
-            f.append(d_enemy > 4)
+            f.append(d_enemy > FOG)
+        
+        
+        explored = state.get_visited(loc)
+        if explored is None:
+            f += [False]*EXPLORED_TURNS_MAX/EXPLORED_TURNS_STEP+1
+        else:
+            for k in range(EXPLORED_TURNS_STEP, EXPLORED_TURNS_MAX, EXPLORED_TURNS_STEP):
+                f.append(explored <= k)
+            f.append(explored > EXPLORED_TURNS_MAX)
         
         return f
+        
+        
+    def extractGreyFeatures(self, world, state, loc, action):
+        pass
+    
+    def extract(self, world, state, loc, action):
+        return self.extractVinFeatures(world, state, loc, action)

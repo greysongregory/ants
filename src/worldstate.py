@@ -353,7 +353,10 @@ class AntWorld(object):
         # Check for invalid direction.
         for a in self.ants:
             if a.direction != None and a.direction not in  ['n','s','e','w']:
-                raise AssertionError("%s is not a valid direction!" % a.direction)
+                if a.direction == 'halt':
+                    a.direction = None
+                else:
+                    raise AssertionError("%s is not a valid direction!" % a.direction)
             
         # Only send orders for alive, moving ants.
         orders = ['o %d %d %s' % 
