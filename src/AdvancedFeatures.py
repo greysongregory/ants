@@ -21,6 +21,23 @@ class AdvancedFeatures(FeatureExtractor):
        
     def init_from_dict(self, input_dict):
         
+        ##------Vin's qualifiers go here----##
+        
+        
+        
+        
+        
+        
+        
+        ##---------Grey's qualifiers here------##
+        
+        
+        
+        
+        
+        
+        
+        
         self.feature_names.append("Moving Towards Closest Enemy")
         self.feature_names.append("Moving Towards Closest Food")
         self.feature_names.append("Moving Towards Friendly")
@@ -59,6 +76,11 @@ class AdvancedFeatures(FeatureExtractor):
         else:
             return None
         
+    def extractVinFeatures(self, world, state, loc, action):
+        pass
+    def extractGreyFeatures(self, world, state, loc, action):
+        pass
+    
     def extract(self, world, state, loc, action):
         """Extract the three simple features."""
         
