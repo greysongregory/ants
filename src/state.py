@@ -94,9 +94,7 @@ class GlobalState:
         self.lookup_res = resolution
         self.visited_res = visited_resolution
         self.visited = {}
-        
-        print "RESOLUTION_________________________________"
-        print resolution
+
         self.draw_heatmap = True
                 
         self.update()
@@ -179,7 +177,6 @@ class GlobalState:
         direction = worldstate.AIM[action]
         next_loc = [loc[i]+self.visited_res*direction[i] for i in range(0, len(direction))]
         return self.get_visited(next_loc)
-        
 
     def get_visited(self, loc):
         """Returns the number of times this location has been visited.""" 
@@ -193,7 +190,7 @@ class GlobalState:
     #away_from_being_attacked[]
     ''' Creates an array with index being spaces from being in attack range and value being the max 
         euclidian distance that gives that number of spaces'''
-    def create_moves_required_to_get_attacked_array(self):
+    def create_moves_required_to_get_attacked(self):
         spaces_from_being_attacked = []
         for i in range(1, MAX_AWAY_FROM_ATTACK_RANGE):
             if i is 1:
