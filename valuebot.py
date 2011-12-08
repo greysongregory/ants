@@ -37,7 +37,7 @@ class ValueBot(AntsBot):
         self.fog = world.viewradius2
         
         # **** NOTE: Disable ant tracking to speed up game playing. 
-        self.world.stateless = True
+        self.world.stateless = False
         
         # Try to load saved configuration from file
         if load_file is not None and os.path.exists(load_file):
