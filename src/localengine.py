@@ -537,7 +537,7 @@ class LocalEngine:
                             str(game.orders))
 
     # Get game options from command line. Largely copied from the
-    # original Ants code.
+    # original Antscode.
     def GetOptions(self, argv):
         usage ="Usage: %prog --run [options]"
         parser = OptionParser(usage=usage)

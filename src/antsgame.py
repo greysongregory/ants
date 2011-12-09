@@ -895,6 +895,9 @@ class Ants(Game):
         # kill ants and distribute score
         for ant in ants_to_kill:
             self.kill_ant(ant)
+            kill_amt_share = len(nearby_enemies[ant])
+            for enemy in nearby_enemies[ant]:
+                enemy.kill_amt = Fraction(1, kill_amt_share)
 
     def do_attack_closest(self):
         """ Iteratively kill neighboring groups of ants """
