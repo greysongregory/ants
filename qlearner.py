@@ -22,6 +22,8 @@ FOOD_REWARD = 19
 DEATH_REWARD = -4
 KILL_REWARD = 14
 RAZED_REWARD = 50
+HILL_DISTANCE_REWARD = 9
+FRIENDLY_HILL_RAZED_REWARD = -20
 EXPLORE_THRESHOLD = 10
 ALPHA_DIVIDER = 5
 DISCOUNT = .6
@@ -53,6 +55,7 @@ class QLearnBot(ValueBot):
         print "death_dealt: "+str(reward_state.death_dealt)
         print "hill_razed: "+str(reward_state.razed_hill)
         print "hill_distance: "+str(reward_state.hill_distance)
+        print "friendly hill razed: "+str(reward_state.friendy_hill_razed)
         print "::::::::::::::::::::"
         
         reward = 0
@@ -61,6 +64,8 @@ class QLearnBot(ValueBot):
         reward += DEATH_REWARD*reward_state.was_killed
         reward += KILL_REWARD*reward_state.death_dealt;
         reward += RAZED_REWARD*reward_state.razed_hill;
+        reward += HILL_DISTANCE_REWARD*reward_state.hill_distance;
+        reward += FRIENDLY_HILL_RAZED_REWARD*reward_state.friendy_hill_razed;
         return reward
         
     def set_pathfinder(self, pathfinder):

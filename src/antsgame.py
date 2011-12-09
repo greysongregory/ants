@@ -20,6 +20,7 @@ FOOD = -3
 WATER = -4
 UNSEEN = -5
 
+HILL_PUNISHMENT_CUTOFF = 9
 PLAYER_ANT = 'abcdefghij'
 HILL_ANT = string = 'ABCDEFGHI'
 PLAYER_HILL = string = '0123456789'
@@ -92,6 +93,8 @@ class Ants(Game):
         self.current_ants = {} # ants that are currently alive
         self.killed_ants = []  # ants which were killed this turn
         self.all_ants = []     # all ants that have been created
+
+        self.owner2ant = {}
 
         self.all_food = []     # all food created
         self.current_food = {} # food currently in game
@@ -176,6 +179,49 @@ class Ants(Game):
         # the engine may kill players before the game starts and this is needed to prevent errors
         self.orders = [[] for i in range(self.num_players)]
         
+
+    def manhattan_distance(self,loc1,loc2):
+        '''Grid distance between two locations on sphere world.'''
+        row1,col1 = loc1
+        row2,col2 = loc2
+        if (row1 > self.height):
+            row1 = row1 - self.height
+        if (row2 > self.height):
+            row2 = row2 - self.height 
+        if (col1 > self.width):
+            col1 = col1 - self.width
+        if (col2 > self.width):
+            col2 = col2 - self.width
+        
+        #row1 = row1 % self.height
+        #row2 = row2 % self.height
+        #col1 = col1 % self.width
+        #col2 = col2 % self.width
+        if col2 > col1:
+            d_col = col2 - col1
+        else:
+            d_col = col1 - col2            
+        if d_col > self.width/2:
+            d_col = self.width - d_col
+
+        if row2 > row1:
+            d_row = row2 - row1
+        else:
+            d_row = row1 - row2            
+        if d_row > self.height/2:
+            d_row = self.height - d_row
+
+        #d_col = min(abs(col1 - col2), self.width - abs(col1 - col2))
+        #d_row = min(abs(row1 - row2), self.height - abs(row1 - row2))
+        return d_row + d_col
+
+    def sort_by_distance(self, loc, targ_list): 
+        '''Returns a sorted list (dist, (x,y)) from an initial list of (x,y) positions, sorted in ascending order of distance to this ant.'''
+        dists = [ (self.manhattan_distance(loc, targ), targ) 
+                            for targ in targ_list ]
+
+        dists.sort(key=(lambda x: x[0]))
+        return dists
 
     def distance(self, a_loc, b_loc):
         """ Returns distance between x and y squared """
@@ -740,7 +786,19 @@ class Ants(Game):
         return hill
 
     def raze_hill(self, hill, killed_by):
+        ant_locations = []
+        loc2ant = {}
+        for ant in self.owner2ant[hill.owner]:
+            ant_locations.append(ant.location)
+            loc2ant[ant.location] = ant
         
+        dist_sorted_ants = self.sort_by_distance(ant_locations)
+        
+        for (dist, loc) in dist_sorted_ants:
+            if dist < HILL_PUNISHMENT_CUTOFF:
+                ant = loc2ant[loc]
+                ant.friendy_hill_razed = True
+            
         hill.end_turn = self.turn
         hill.killed_by = killed_by
         self.score[killed_by] += HILL_POINTS
@@ -758,16 +816,22 @@ class Ants(Game):
         """
         loc = hill.loc
         owner = hill.owner
+        
         ant = Ant(loc, owner, self.turn)
         row, col = loc
         self.map[row][col] = owner
         self.all_ants.append(ant)
         self.current_ants[loc] = ant
+        if owner not in self.owner2ant:
+            self.owner2ant[owner] = []
+        self.owner2ant[owner].append(ant)
         hill.last_touched = self.turn
         return ant
 
     def add_initial_ant(self, loc, owner):
+        
         ant = Ant(loc, owner, self.turn)
+        
         row, col = loc
         self.map[row][col] = owner
         self.all_ants.append(ant)
@@ -1764,6 +1828,7 @@ class Ant:
         self.kill_amt = 0
         self.razed_hill = False
         self.hill_distance = 0
+        self.friendy_hill_razed = False
 
     def __str__(self):
         return '(%s, %s, %s, %s, %s)' % (self.initial_loc, self.owner, self.spawn_turn, self.die_turn, ''.join(self.orders))

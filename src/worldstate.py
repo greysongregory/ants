@@ -54,6 +54,7 @@ class RewardEvents:
         self.was_killed = False
         self.razed_hill = False
         self.hill_distance = float(0)
+        self.friendy_hill_razed = False
 
 class AntStatus:
     '''Enum type to represent persistent ant status.'''
