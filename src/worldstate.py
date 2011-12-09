@@ -20,11 +20,12 @@
 # TODO: AntsWorld should keep track of UNSEEN map elements, which are
 # currently unused.
 
+from __future__ import division
 import random
 import sys
 import traceback
 import time
-from __future__ import division
+
 
 from logutil import *
 

@@ -115,9 +115,8 @@ class aStarSearch(AntPathSearch):
         self.cache_count += 1
     
     def get_path(self, world, start,goal):
-        if goal in self.cached_paths and start in self.cached_paths[goal] and self.cache_count%CACHE_EXPIRATION != 0:
+        if goal in self.cached_paths and start in self.cached_paths[goal] and self.cache_count%CACHE_EXPIRATION != CACHE_EXPIRATION-1:
             self.cached += 1
-            
             return self.cached_paths[goal][start]
         
         else:
