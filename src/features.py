@@ -290,7 +290,7 @@ class AdvancedFeatures(FeatureExtractor):
         enemy_loc = self.find_closest(world, loc, state.lookup_nearby_enemy(loc))
         if enemy_loc is None:
             return False
-        dist = world.euclidian_distance(loc, enemy_loc)
+        dist = world.euclidean_distance2(loc, enemy_loc)
         spaces = -1
         for i in range(1, 7):
             if dist < spaces_to_distance:
@@ -302,7 +302,7 @@ class AdvancedFeatures(FeatureExtractor):
         enemy_loc = self.find_closest(world, loc, state.lookup_nearby_enemy(loc))
         if enemy_loc is None:
             return False
-        dist = world.euclidian_distance(loc, enemy_loc)
+        dist = world.euclidean_distance2(loc, enemy_loc)
         spaces = -1
         for i in range(1, 7):
             if dist < spaces_to_distance:
@@ -314,7 +314,7 @@ class AdvancedFeatures(FeatureExtractor):
         enemy_loc = self.find_closest(world, loc, state.lookup_nearby_enemy(loc))
         if enemy_loc is None:
             return False
-        dist = world.euclidian_distance(loc, enemy_loc)
+        dist = world.euclidean_distance2(loc, enemy_loc)
         spaces = -1
         for i in range(1, 7):
             if dist < spaces_to_distance:
@@ -328,7 +328,7 @@ class AdvancedFeatures(FeatureExtractor):
         enemy_loc = self.find_closest(world, loc, state.lookup_nearby_enemy(loc))
         if enemy_loc is None:
             return False
-        dist = world.euclidian_distance(loc, enemy_loc)
+        dist = world.euclidean_distance2(loc, enemy_loc)
         spaces = -1
         for i in range(1, 7):
             if dist < spaces_to_distance:
@@ -342,7 +342,7 @@ class AdvancedFeatures(FeatureExtractor):
         enemy_loc = self.find_closest(world, loc, state.lookup_nearby_enemy(loc))
         if enemy_loc is None:
             return False
-        dist = world.euclidian_distance(loc, enemy_loc)
+        dist = world.euclidean_distance2(loc, enemy_loc)
         spaces = -1
         for i in range(1, 7):
             if dist < spaces_to_distance:

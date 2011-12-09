@@ -51,6 +51,7 @@ class RewardEvents:
         self.death_dealt = 0
         self.was_killed = False
         self.razed_hill = False
+        self.hill_distance = 0
 
 class AntStatus:
     '''Enum type to represent persistent ant status.'''
@@ -201,7 +202,18 @@ class AntWorld(object):
             ant.previous_reward_events.death_dealt = engine_ant.kill_amt
             ant.previous_reward_events.was_killed = (ant.status == AntStatus.DEAD)
             ant.previous_reward_events.razed_hill = engine_ant.razed_hill
-                        
+            
+                    
+    def update_ant_hill_distances(self):
+        if len(self.enemy_hills()) > 0:
+            print "------------HOLY SHIT____________________________________________________________________________________"
+        for ant in self.ants:
+            if self.closest_enemy_hill(ant.location) is None:
+                distance = 0
+                break
+            distance = self.manhattan_distance(ant.location, self.closest_enemy_hill(ant.location))
+            ant.previous_reward_events.hill_distance = float(1)/distance
+            
 
     # _updates a world state based on data from the engine/server.
     def _update(self, data, engine_ants):
@@ -290,6 +302,7 @@ class AntWorld(object):
         if not self.stateless:
             self._track_friendlies(check_ants)
             self._join_with_engine_ants(engine_ants)
+            self.update_ant_hill_distances()
 
     def time_remaining(self):
         return self.turntime - int(1000 * (time.time() - self.turn_start_time))
@@ -417,6 +430,10 @@ class AntWorld(object):
         '''Get the locations of enemy ant hills.'''
         return [(loc, owner) for loc, owner in self.hill_list.items()
                     if owner != MY_ANT]
+    def enemy_hills2(self):
+        '''Get the locations of enemy ant hills.'''
+        return [loc for loc, owner in self.hill_list.items()
+                    if owner != MY_ANT]
 
     def passable(self, loc):
         return self.map[loc[0]][loc[1]] != WATER
@@ -505,6 +522,14 @@ class AntWorld(object):
     def closest_enemy(self, loc):
         '''Get the closest enemy, or None if no enemy is in sight.'''
         dists = self.sort_by_distance(loc, self.enemies)
+        if dists:
+            return dists[0][1]
+        else:
+            return None
+        
+    def closest_enemy_hill(self, loc):
+        '''Get the closest enemy, or None if no enemy is in sight.'''
+        dists = self.sort_by_distance(loc, self.enemy_hills2())
         if dists:
             return dists[0][1]
         else:

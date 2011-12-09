@@ -1436,6 +1436,26 @@ class Ants(Game):
         self.removed_food = [[] for _ in range(self.num_players)]
         self.orders = [[] for _ in range(self.num_players)]
 
+    def distance_to_closest_hill(self, loc, hills):
+        pass
+    
+    def update_hill_vision(self):
+        #get closest visible hill
+        self.get_perspective()
+        owner2hills = {}
+        
+        for hill in self.hills.values():
+            owner2hills[hill.owner] = hill
+        
+        
+        #set distance for each ant
+        for ant in self.all_ants:
+            owner = ant.owner
+            hills = owner2hills[owner]
+            distance = self.distance_to_closest_hill(ant.loc, hills)
+            ant.hill_distance = distance
+
+
     def finish_turn(self):
         """ Called by engine at the end of the turn """
         self.do_orders()
@@ -1443,10 +1463,14 @@ class Ants(Game):
         self.do_raze_hills()
         self.do_spawn()
         self.do_gather()
+        #self.update_hill_vision()
+        
         self.food_extra += Fraction(self.food_rate * self.num_players, self.food_turn)
         food_now = int(self.food_extra)
         left_over = self.do_food(food_now)
         self.food_extra -= (food_now - left_over)
+
+
 
         # record score in score history
         for i, s in enumerate(self.score):
@@ -1739,6 +1763,7 @@ class Ant:
         self.food_amt = 0
         self.kill_amt = 0
         self.razed_hill = False
+        self.hill_distance = 0
 
     def __str__(self):
         return '(%s, %s, %s, %s, %s)' % (self.initial_loc, self.owner, self.spawn_turn, self.die_turn, ''.join(self.orders))
