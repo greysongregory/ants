@@ -95,6 +95,13 @@ class aStarSearch(AntPathSearch):
     
     def __init__(self):
         self.cached_paths = {}
+        self.cached = 0
+        self.uncached = 0
+    
+    def cache_rate(self):
+        if self.cached == 0 and self.uncached == 0:
+            return 0
+        return float(self.cached)/(self.cached+self.uncached)
     
     #use manhattan distance
     def heuristic_cost(self, state,goal):
@@ -102,10 +109,11 @@ class aStarSearch(AntPathSearch):
     
     def get_path(self, world, start,goal):
         if goal in self.cached_paths and start in self.cached_paths[goal]:
-            print "_____Cached_____"
+            self.cached += 1
             return self.cached_paths[goal][start]
         
         else:
+            self.uncached += 1
             visited = {}
             g = {start : 0}
             h = {}
