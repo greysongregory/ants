@@ -42,6 +42,7 @@ class QLearnBot(ValueBot):
             reward_state.was_killed: boolean flag whether the ant died this turn
             reward_state.death_dealt: Fraction of responsibility this ant contributed to killing other ants (e.g., if 2 ants killed an enemy an, each would have death_dealt=1/2
             reward_state.hill_razed: 
+            reward_state.hill_distance: Fraction, 1/x
         """
         
         print ":::::Reward Info::::"
@@ -49,6 +50,7 @@ class QLearnBot(ValueBot):
         print "was_killed: "+str(reward_state.was_killed)
         print "death_dealt: "+str(reward_state.death_dealt)
         print "hill_razed: "+str(reward_state.razed_hill)
+        print "hill_distance: "+str(reward_state.hill_distance)
         print "::::::::::::::::::::"
         
         reward = 0
