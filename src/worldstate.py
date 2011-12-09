@@ -174,9 +174,11 @@ class AntWorld(object):
 
 
     def _join_with_engine_ants(self,engine_ants):
-        loc2id = {}        
+        loc2id = {}    
+        id2ant = {}    
         for ant in self.ants:
             loc2id[ant.location] = ant.ant_id
+            id2ant[ant.ant_id] = ant
             
         # sanity check: make sure there is a one-to-one mapping of check_ants and engine_ants
         claimed_spots = {}
@@ -191,7 +193,8 @@ class AntWorld(object):
                 
         # if everything is ok, copy over synced info for learning
         for engine_ant in engine_ants:
-            ant = self.ants[loc2id[engine_ant.loc]]
+            ant_id = loc2id[engine_ant.loc]
+            ant = id2ant[ant_id]
             ant.previous_reward_events = RewardEvents()
             ant.previous_reward_events.food_eaten = engine_ant.food_amt
             ant.previous_reward_events.death_dealt = engine_ant.kill_amt
