@@ -199,7 +199,7 @@ class AntWorld(object):
                         
 
     # _updates a world state based on data from the engine/server.
-    def _update(self, data):
+    def _update(self, data, engine_ants):
         
         # start timer
         self.turn_start_time = time.time()
@@ -271,12 +271,12 @@ class AntWorld(object):
                         if self.debug_mode:
                             self.L.debug("RCV WATER at %d,%d" % (row,col))
                     elif tokens[0] == 'd': # dead body found
-                         # food could spawn on a spot where an ant just died
-                         # don't overwrite the space unless it is land
-                         if self.map[row][col] == LAND:
-                             self.map[row][col] = DEAD
-                             # but always add to the dead list
-                             self.dead_dict[(row, col)] = 1;
+                        # food could spawn on a spot where an ant just died
+                        # don't overwrite the space unless it is land
+                        if self.map[row][col] == LAND:
+                            self.map[row][col] = DEAD
+                            # but always add to the dead list
+                        self.dead_dict[(row, col)] = 1;
                     elif tokens[0] == 'h':
                         owner = int(tokens[3])
                         self.hill_list[(row, col)] = owner                          

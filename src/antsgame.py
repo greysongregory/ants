@@ -1724,6 +1724,10 @@ class Ant:
         self.die_turn = None
         self.orders = []
         self.killed = False
+        
+        # extra event flags for rewards in reinforcement learning
+        self.food_amt = 0
+        self.kill_amt = 0
 
     def __str__(self):
         return '(%s, %s, %s, %s, %s)' % (self.initial_loc, self.owner, self.spawn_turn, self.die_turn, ''.join(self.orders))
