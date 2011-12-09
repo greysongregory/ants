@@ -152,8 +152,6 @@ class AdvancedFeatures(FeatureExtractor):
     def movingOnAStarPath(self, world, loc, next_loc, dest):
         #for a* path: 0th index is start location, 1st is next loc
         
-        return self.moving_towards(world, loc, next_loc, dest)
-        
         path = self.search.get_path(world, loc, dest)
         if path is None:
             return False
