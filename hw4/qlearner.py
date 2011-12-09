@@ -10,16 +10,6 @@ from src.state import GlobalState
 from valuebot import ValueBot
 import random
 
-
-
-LIVING_REWARD = -1
-FOOD_REWARD = 19
-DEATH_REWARD = -4
-KILL_REWARD = 14
-EXPLORE_THRESHOLD = 10
-ALPHA_DIVIDER = 5
-DISCOUNT = .6
-PLAY_TYPE = 'batch'
 class QLearnBot(ValueBot):
     
     def __init__(self,world, load_file="save_bots/qbot.json"):
@@ -34,17 +24,11 @@ class QLearnBot(ValueBot):
             reward_state.was_killed: boolean flag whether the ant died this turn
             reward_state.death_dealt: Fraction of responsibility this ant contributed to killing other ants (e.g., if 2 ants killed an enemy an, each would have death_dealt=1/2
         """
-        died = 0
-        if reward_state.was_killed:
-            died = 1
-        reward = 0
-        reward += LIVING_REWARD
-        reward += FOOD_REWARD*reward_state.food_eaten
-        reward += DEATH_REWARD*died
-        reward += KILL_REWARD*reward_state.death_dealt;
-        
-        print "reward  "
-        print reward
+
+        '''
+        YOUR CODE HERE
+        '''
+        reward = 1337
         return reward
     
     def avoid_collisions(self):
@@ -92,10 +76,11 @@ class QLearnBot(ValueBot):
         """
             Perform an update of the weights here according to the Q-learning
             weight update rule described in the homework handout.
+
+            YOUR CODE HERE
         """
-        
         for i in range(len(self.weights)):
-            self.weights[i] += alpha*(reward + discount*maxval - prevval)*features[i]
+            self.weights[i] += 0xdeadbeef
         
 
     def explore_and_exploit(self,ant):
@@ -107,7 +92,7 @@ class QLearnBot(ValueBot):
         actions = self.world.get_passable_directions(ant.location, AIM.keys())
         random.shuffle(actions)
         if len(actions)==0:
-            return None
+            return 'halt'
         
         # if we have a newborn baby ant, init its rewards and quality fcns
         if 'prev_value' not in ant.__dict__:
@@ -123,24 +108,18 @@ class QLearnBot(ValueBot):
         # step size.  it's good to make this inversely proportional to the
         # number of features, so you don't bounce out of the bowl we're trying
         # to descend via gradient descent
-        alpha = float(1) / (len(ant.prev_features)*ALPHA_DIVIDER)
-        print alpha
+        alpha = 1.0
+        
         # totally greedy default value, future rewards count for nothing, do not want
-        discount = DISCOUNT
+        discount = 0.0 
         
         # should be max_a' Q(s',a'), where right now we are in state s' and the
         # previous state was s.  You can use
         # self.value(self.state,ant.location,action) here
-        max_next_value = 0
-        max_next_action = None
-        for action in actions:
-            val = self.value(self.state,ant.location,action)
-            if max_next_value < val:
-                max_next_value = val
-                max_next_action = action
+        max_next_value = 0 
         
         # should be argmax_a' Q(s',a')
-        #max_next_action = 'halt'
+        max_next_action = 'halt'
         
         # now that we have all the quantities needed, adjust the weights
         self.update_weights(alpha,discount,R,max_next_value,ant.prev_value,ant.prev_features)
@@ -148,15 +127,7 @@ class QLearnBot(ValueBot):
                 
         # step 2, explore or exploit? you should replace decide_to_explore with
         # something sensible based on the number of games played so far, self.ngames
-        
-        if self.ngames < EXPLORE_THRESHOLD:
-            decide_to_explore = True
-        else:
-            if random.randint(0,(self.ngames-EXPLORE_THRESHOLD)/2) == 0:
-                decide_to_explore = True
-            else:
-                decide_to_explore = False
-            decide_to_explore = False
+        decide_to_explore = True
         if decide_to_explore:
             return actions[0]
         else:      
@@ -173,6 +144,7 @@ if __name__ == '__main__':
     import time
 
     start_time = time.time()
+    
     if len(sys.argv) < 2:
         print 'Missing argument ---'
         print 'Usage: python qlearner.py <game number>'
@@ -180,8 +152,8 @@ if __name__ == '__main__':
     game_number = int(sys.argv[1])
     
 #    PLAY_TYPE = 'step'
-  #  PLAY_TYPE = 'batch'
-  #  PLAY_TYPE = 'play'
+#    PLAY_TYPE = 'batch'
+    PLAY_TYPE = 'play'
 
     # Run the local debugger
     engine = LocalEngine(game=None)
@@ -205,7 +177,6 @@ if __name__ == '__main__':
     engine.AddBot(qbot)        
     engine.AddBot(GreedyBot(engine.GetWorld()))
     qbot.ngames = game_number + 1
-    
     engine.Run(PLAY_TYPE,sys.argv + ["--run", "-m", "src/maps/2player/my_random.map"])
     qbot.save('saved_bots/qbot.json')
     # this is an easy way to look at the weights
