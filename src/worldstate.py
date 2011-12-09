@@ -50,6 +50,7 @@ class RewardEvents:
         self.food_eaten = 0
         self.death_dealt = 0
         self.was_killed = False
+        self.razed_hill = False
 
 class AntStatus:
     '''Enum type to represent persistent ant status.'''
@@ -199,6 +200,7 @@ class AntWorld(object):
             ant.previous_reward_events.food_eaten = engine_ant.food_amt
             ant.previous_reward_events.death_dealt = engine_ant.kill_amt
             ant.previous_reward_events.was_killed = (ant.status == AntStatus.DEAD)
+            ant.previous_reward_events.razed_hill = engine_ant.razed_hill
                         
 
     # _updates a world state based on data from the engine/server.

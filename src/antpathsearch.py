@@ -106,7 +106,6 @@ class aStarSearch(AntPathSearch):
             return self.cached_paths[goal][start]
         
         else:
-            print "not cached"
             visited = {}
             g = {start : 0}
             h = {}
