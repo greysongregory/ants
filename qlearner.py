@@ -94,7 +94,7 @@ class QLearnBot(ValueBot):
         for ant in self.world.ants:
             if ant.status == AntStatus.ALIVE or ant.previous_reward_events.was_killed:
                 ant.direction = self.explore_and_exploit(ant)
-                
+        self.features.increase_cache_expiration_count()
         self.avoid_collisions()
         
         # record features for action taken so we can update when we arrive in the next state next turn

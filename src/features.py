@@ -157,6 +157,8 @@ class AdvancedFeatures(FeatureExtractor):
             return False
         return next_loc == path[1];
         
+    def increase_cache_expiration_count(self):
+        self.search.increase_cache_expiration_count()
     
     def extractVinFeatures(self, world, state, loc, action):
         """Extract the three simple features."""

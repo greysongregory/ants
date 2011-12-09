@@ -24,6 +24,7 @@ import random
 import sys
 import traceback
 import time
+from __future__ import division
 
 from logutil import *
 
@@ -51,7 +52,7 @@ class RewardEvents:
         self.death_dealt = 0
         self.was_killed = False
         self.razed_hill = False
-        self.hill_distance = 0
+        self.hill_distance = float(0)
 
 class AntStatus:
     '''Enum type to represent persistent ant status.'''
