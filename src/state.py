@@ -107,6 +107,9 @@ class GlobalState:
             self.grid_enemy = GridLookup(world.enemies, world.height, world.width, self.lookup_res)
         else:
             self.grid_enemy = None
+            
+        if len(world.hills) > GlobalState.cutoff:
+            self.grid_enemy = GridLookup(world.enemies, world.height, world.width, self.lookup_res)
                  
         if len(world.food) > GlobalState.cutoff:             
             self.grid_food = GridLookup(world.food, world.height, world.width, self.lookup_res)
@@ -152,6 +155,9 @@ class GlobalState:
 
         # remove the query point from the lookup        
         return self.grid_friendly.nearby_points(loc)
+
+    def lookup_nearby_hill(self, loc):
+        
 
     def lookup_nearby_enemy(self, loc):
         """Returns enemies within 2*lookup_res manhattan distance if n > 25, otherwise all enemies."""

@@ -95,8 +95,13 @@ class AdvancedFeatures(FeatureExtractor):
         self.feature_names.append("Moving on A* path Closest Enemy")
         self.feature_names.append("Moving on A* path Towards Closest Food")
         self.feature_names.append("Moving on A* path Towards Friendly")
+        self.feature_names.append("Moving on A* path Towards hill")
        
         self.feature_names.append("Friendly adjacent")
+
+        for x in range(1, FOG+1):
+            self.feature_names.append("Closest hill "+str(x)+" away")
+        self.feature_names.append("Closest hill > "+str(x)+" away")
 
         for x in range(1, FOG+1):
             self.feature_names.append("Closest food "+str(x)+" away")
@@ -163,7 +168,7 @@ class AdvancedFeatures(FeatureExtractor):
         food_loc = self.find_closest(world, loc, state.lookup_nearby_food(loc))
         enemy_loc = self.find_closest(world, loc, state.lookup_nearby_enemy(loc))
         friend_loc = self.find_closest(world, loc, state.lookup_nearby_friendly(loc))
-
+        hill_loc = self.find_closest(world, loc, world.my_hills(loc))
 
         next_loc = world.next_position(loc, action)
         world.L.debug("loc: %s, food_loc: %s, enemy_loc: %s, friendly_loc: %s" % (str(loc), str(food_loc), str(enemy_loc), str(friend_loc)))
@@ -189,12 +194,28 @@ class AdvancedFeatures(FeatureExtractor):
             f.append(self.movingOnAStarPath(world, loc, next_loc, friend_loc));
             
 
+        # Moving towards hill
+        if hill_loc is None:
+            f.append(False)
+        else:
+            f.append(self.movingOnAStarPath(world, loc, next_loc, hill_loc));
+
         
         # adjacent friendly
         if friend_loc is None:
             f.append(False)
         else:
             f.append(world.manhattan_distance(next_loc,friend_loc)==1)
+            
+            
+        # closest hill_loc {1,2,3,4} away
+        if hill_loc is None:
+            f += [False]*(int(FOG+1))
+        else:
+            d_hill = world.manhattan_distance(next_loc,hill_loc)
+            for k in range(1,FOG+1):
+                f.append(d_hill == k)
+            f.append(d_hill > FOG)
             
         # closest food {1,2,3,4} away
         if food_loc is None:
