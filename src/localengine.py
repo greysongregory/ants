@@ -177,6 +177,8 @@ class LocalEngine:
         self.bots = []
         self.heatmaps = {}
 
+        self.count = 0
+
         # Set up the main Tk window which will show the map.
         gui.grid()
         gui.master.geometry("100x100+50+50")
@@ -249,7 +251,9 @@ class LocalEngine:
             gui.mainloop()
         elif run_mode == 'play' or run_mode == 'batch': 
             while 1: 
-                if run_mode == 'play':
+                self.count += 1
+                if run_mode == 'play' and self.count == 30:
+                    self.count = 0
                     gui.update()
                 if self.RunTurn() == 0:
                     break

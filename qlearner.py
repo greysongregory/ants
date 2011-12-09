@@ -24,7 +24,7 @@ RAZED_REWARD = 50
 EXPLORE_THRESHOLD = 10
 ALPHA_DIVIDER = 5
 DISCOUNT = .6
-PLAY_TYPE = 'batch'
+PLAY_TYPE = 'play'
 
 
 class QLearnBot(ValueBot):
@@ -119,6 +119,7 @@ class QLearnBot(ValueBot):
 
         actions = self.world.get_passable_directions(ant.location, AIM.keys())
         random.shuffle(actions)
+        
         if len(actions)==0:
             return 'halt'
         # if we have a newborn baby ant, init its rewards and quality fcns

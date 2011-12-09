@@ -205,6 +205,8 @@ class AntWorld(object):
             
                     
     def update_ant_hill_distances(self):
+        if len(self.enemy_hills()) > 0:
+            print "------------HOLY SHIT____________________________________________________________________________________"
         for ant in self.ants:
             if self.closest_enemy_hill(ant.location) is None:
                 distance = 0
