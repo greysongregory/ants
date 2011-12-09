@@ -20,10 +20,12 @@
 # TODO: AntsWorld should keep track of UNSEEN map elements, which are
 # currently unused.
 
+from __future__ import division
 import random
 import sys
 import traceback
 import time
+
 
 from logutil import *
 
@@ -51,7 +53,7 @@ class RewardEvents:
         self.death_dealt = 0
         self.was_killed = False
         self.razed_hill = False
-        self.hill_distance = 0
+        self.hill_distance = float(0)
 
 class AntStatus:
     '''Enum type to represent persistent ant status.'''

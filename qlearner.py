@@ -7,6 +7,7 @@ from src.worldstate import AIM, AntStatus, RewardEvents
 from src.mapgen import SymmetricMap
 from src.features import CompositingFeatures, AdvancedFeatures
 from src.state import GlobalState
+from antpathsearch import aStarSearch
 from valuebot import ValueBot
 import random
 from src.localengine import LocalEngine
@@ -33,6 +34,7 @@ class QLearnBot(ValueBot):
         self.world = world
         ValueBot.__init__(self,world, load_file)
         self.nturns = 0
+        self.pathfinder = None
     
     def get_reward(self,reward_state):
         """ 
@@ -61,6 +63,9 @@ class QLearnBot(ValueBot):
         reward += RAZED_REWARD*reward_state.razed_hill;
         return reward
         
+    def set_pathfinder(self, pathfinder):
+        self.pathfinder = pathfinder
+    
     
     def avoid_collisions(self):
         """ 
@@ -94,8 +99,9 @@ class QLearnBot(ValueBot):
         for ant in self.world.ants:
             if ant.status == AntStatus.ALIVE or ant.previous_reward_events.was_killed:
                 ant.direction = self.explore_and_exploit(ant)
-                
+
         self.avoid_collisions()
+        
         
         # record features for action taken so we can update when we arrive in the next state next turn
         for ant in self.world.ants:    

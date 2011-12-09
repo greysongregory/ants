@@ -7,6 +7,9 @@ from antsgame import AIM
 import heapq
 import math
 
+
+CACHE_EXPIRATION = 20
+
 class AntPathSearch():
     ''' This is a base class for all specific search classes. '''
     
@@ -97,6 +100,7 @@ class aStarSearch(AntPathSearch):
         self.cached_paths = {}
         self.cached = 0
         self.uncached = 0
+        self.cache_count = 0
     
     def cache_rate(self):
         if self.cached == 0 and self.uncached == 0:
@@ -107,8 +111,11 @@ class aStarSearch(AntPathSearch):
     def heuristic_cost(self, state,goal):
         return math.fabs(goal[0]-goal[1]) + math.fabs(state[0]-state[1])
     
+    def increase_cache_expiration_count(self):
+        self.cache_count += 1
+    
     def get_path(self, world, start,goal):
-        if goal in self.cached_paths and start in self.cached_paths[goal]:
+        if goal in self.cached_paths and start in self.cached_paths[goal] and self.cache_count%CACHE_EXPIRATION != CACHE_EXPIRATION-1:
             self.cached += 1
             return self.cached_paths[goal][start]
         
@@ -129,7 +136,7 @@ class aStarSearch(AntPathSearch):
                     parent = parents[goal]
                     while parent is not None:
                         path.insert(0, parent)
-                        if parent not in self.cached_paths:
+                        if goal not in self.cached_paths:
                             self.cached_paths[goal] = {}
                         self.cached_paths[goal][parent] = path
                         parent = parents[parent]

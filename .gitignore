@@ -16,3 +16,5 @@ src/maps/2player/my_random.map
 src/state.pyc
 src/worldsta.pyc
 valuebot.pyc
+greedybot.pyc qlearner.pyc valuebot.pyc
+

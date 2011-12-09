@@ -152,13 +152,10 @@ class AdvancedFeatures(FeatureExtractor):
     def movingOnAStarPath(self, world, loc, next_loc, dest):
         #for a* path: 0th index is start location, 1st is next loc
         
-        return self.moving_towards(world, loc, next_loc, dest)
-        
         path = self.search.get_path(world, loc, dest)
         if path is None:
             return False
         return next_loc == path[1];
-        
     
     def extractVinFeatures(self, world, state, loc, action):
         """Extract the three simple features."""
@@ -191,7 +188,7 @@ class AdvancedFeatures(FeatureExtractor):
         else:
             f.append(self.movingOnAStarPath(world, loc, next_loc, friend_loc));
             
-        print self.search.cache_rate()
+
         
         # adjacent friendly
         if friend_loc is None:
@@ -533,7 +530,8 @@ class CompositingFeatures(FeatureExtractor):
     def __init__(self, base_f, qual_f):
         FeatureExtractor.__init__(self, {'_type': CompositingFeatures.type_name, 
                                          'base_f' : base_f.to_dict(), 'qual_f': qual_f.to_dict()})
-                             
+    
+             
     def init_from_dict(self, input_dict):
         self.base_f = FeatureExtractor(input_dict['base_f']) 
         self.qual_f = FeatureExtractor(input_dict['qual_f']) 

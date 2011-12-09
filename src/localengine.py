@@ -46,7 +46,9 @@ from antsbot import *
 from antsgame import * # Importing * is required to get all of the
                                               # constants from antsgame.py
 
-PLAY_SPEED_MS = 10 #adjust as needed
+
+GUI_UPDATE_INTERVAL = 30
+PLAY_SPEED_MS = 1 #adjust as needed
 GAMELOG_BOTNUM = -1 #hacky hack hackerson
 # Whether or not to crash the entire game upon invalid moves
 STRICT_MODE = True
@@ -252,7 +254,7 @@ class LocalEngine:
         elif run_mode == 'play' or run_mode == 'batch': 
             while 1: 
                 self.count += 1
-                if run_mode == 'play' and self.count == 30:
+                if run_mode == 'play' and self.count == GUI_UPDATE_INTERVAL:
                     self.count = 0
                     gui.update()
                 if self.RunTurn() == 0:
