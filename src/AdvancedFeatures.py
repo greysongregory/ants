@@ -70,7 +70,6 @@ class AdvancedFeatures(FeatureExtractor):
         else:
             return None
         
-<<<<<<< HEAD
     def extractVinFeatures(self, world, state, loc, action):
         pass
     
@@ -265,5 +264,5 @@ class AdvancedFeatures(FeatureExtractor):
     def extractGreyFeatures(self, world, state, loc, action):
         pass
     
-    def extract(self, world, state, loc, action):
-        return self.extractVinFeatures(world, state, loc, action)
+ #   def extract(self, world, state, loc, action):
+ #       return self.extractVinFeatures(world, state, loc, action)
