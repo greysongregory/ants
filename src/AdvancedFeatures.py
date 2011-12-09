@@ -47,17 +47,8 @@ class AdvancedFeatures(FeatureExtractor):
         
         
         ##---------Grey's qualifiers here------##
-        self.feature_names.append("Is One From Attack")
-        self.feature_names.append("Is Two From Attack")
-        self.feature_names.append("Is Three From Attack")
-        self.feature_names.append("Is Four From Attack")
-        self.feature_names.append("Is Five From Attack") 
-        self.feature_names.append("Is At Least Twice Enemy Army")
-        self.feature_names.append("Is At Least One and a Half Enemy Army")
-        self.feature_names.append("Is At Least Equal Enemy Army")
-        self.feature_names.append("Is Closest Ant to Closest Food")
-        self.feature_names.append("Is Closer to Food than Enemy")
-           
+        
+
     def __init__(self):
         
         FeatureExtractor.__init__(self, {'_type': AdvancedFeatures.type_name}) 
