@@ -9,4 +9,35 @@ Anything else you want us to know about your submission
 	 Once we wrote our first draft of our qualifiers, we ran our bot only to find that the q-learning infrastructure that was in place for hw4 was broken on the hills branch, due to extensive changes in the code to add the new game constraints. We were tempted to begin writing a bot that used a different implementation strategy, but decided to try and patch the structure in place already. The patching consisted of us methodically going through the hw4 branch code and comparing it to the new hills code. Although patching took a bulk of our time to do, we were happy to finally get it working and see our bot training successfully. 
 	 Most of the methods we wrote for our bot came in the form of qualifiers. An overview of each will follow. Qualifiers of the form "Is *x* from attack" calculate how far an ant is from an enemy attack radius, where one means that the ant is a single move from being attacked (assuming the attack radius is unchanged).
 
+
 	 
+class AdvancedFeatures(FeatureExtractor)
+	movingOnAStarPath(self, world, loc, next_loc, dest)
+		checks if an ant is moving on an a* path towards a destination (food, enemies, hills, etc)
+	extractVinFeatures(self, world, state, loc, action)
+		contains features relating to exploring new areas, moving on a* path, being close to food, enemies, hills, etc
+	extractBetterThanVinFeatures(self, world, state, loc, action)
+		grey is an idiot
+
+class QLearnBot(ValueBot)		
+	get_reward(self, reward_state, ant)
+		changed to reflect new rewards. All rewards are weighted with easy to change constants
+	explore_and_exploit(self,ant)
+		modifications based on when to exploit
+	run(arg)
+		created this method so that we could call the main method of qlearner from another python file (windows compatibility baaah)
+
+class GlobalState()
+	update(self)
+		changed this method to make the heatmap only reflect recent movement (use a decay/expiration strategy to do this)
+	create_moves_required_to_get_attacked(self)
+		i dont know what it does, grey wrote it, but i can guarantee that its stupid
+
+class RewardEvents()
+	added some more state
+	
+class LocalEngine
+class Ants(Game)
+class Ant()
+class AntWorld(object)
+	Modified numerous functions here to get qlearning to work again

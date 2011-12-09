@@ -54,7 +54,7 @@ class QLearnBot(ValueBot):
         if self.state.get_visited(ant.location) == 0:
             explore_bonus = 1
         else:
-            explore_bonus = float(1)/(self.state.get_visited(ant.location)*10)
+            explore_bonus = float(1)/(self.state.get_visited(ant.location)*100)
                                   
         
         
