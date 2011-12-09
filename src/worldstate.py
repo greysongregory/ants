@@ -172,6 +172,32 @@ class AntWorld(object):
                 self.ant_lookup[(i,j)] = -1
         self.L.debug("World state initialized")
 
+
+    def _join_with_engine_ants(self,engine_ants):
+        loc2id = {}        
+        for ant in self.ants:
+            loc2id[ant.location] = ant.ant_id
+            
+        # sanity check: make sure there is a one-to-one mapping of check_ants and engine_ants
+        claimed_spots = {}
+        for i,engine_ant in zip(range(len(engine_ants)),engine_ants):
+            if engine_ant.loc not in loc2id:
+                self.L.error("Engine thinks ant at %s, but worldstate has no such ant!" % str(engine_ant.loc))
+            elif engine_ant.loc in claimed_spots:
+                self.L.error("Engine thinks 2 ants in spot %s: %d and %d!" % (str(engine_ant.loc),claimed_spots[engine_ant.loc],i))
+            else:
+                claimed_spots[engine_ant.loc] = i
+                
+                
+        # if everything is ok, copy over synced info for learning
+        for engine_ant in engine_ants:
+            ant = self.ants[loc2id[engine_ant.loc]]
+            ant.previous_reward_events = RewardEvents()
+            ant.previous_reward_events.food_eaten = engine_ant.food_amt
+            ant.previous_reward_events.death_dealt = engine_ant.kill_amt
+            ant.previous_reward_events.was_killed = (ant.status == AntStatus.DEAD)
+                        
+
     # _updates a world state based on data from the engine/server.
     def _update(self, data):
         
@@ -258,6 +284,7 @@ class AntWorld(object):
         
         if not self.stateless:
             self._track_friendlies(check_ants)
+            self._join_with_engine_ants(engine_ants)
 
     def time_remaining(self):
         return self.turntime - int(1000 * (time.time() - self.turn_start_time))
