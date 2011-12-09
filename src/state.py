@@ -73,6 +73,9 @@ class GridLookup:
         else:
             return list()
  
+MAX_VISITED_VALUE = 1
+EXPIRATION_INTERVAL = 2
+EXPIRATION_VALUE = 1
 class GlobalState:
     """Template class storing useful datastructure that is helpful for maintaining state between multiple ants.
     
@@ -96,7 +99,7 @@ class GlobalState:
         self.visited = {}
 
         self.draw_heatmap = True
-                
+        self.turn_count = 0
         self.update()
         
     def update(self):
@@ -119,13 +122,23 @@ class GlobalState:
         else:
             self.grid_friendly = None
             
+            
+        if self.turn_count >= EXPIRATION_INTERVAL:
+            #expire visited counts
+            for key in self.visited:
+                if self.visited[key] >0:
+                    self.visited[key] -= EXPIRATION_VALUE
+        
         # Update visited states
         for ant in self.world.ants:
             key = self._visited_key(ant.location)
             if self.visited.has_key(key):
-                self.visited[key] += 1
+                if self.visited[key] < MAX_VISITED_VALUE:
+                    self.visited[key] += 1
             else:
                 self.visited[key] = 1
+                
+        self.turn_count += 1        
                 
         # This is very important: do not import localengine at top of python file or else your code will
         # not be able to run on the competition server. 

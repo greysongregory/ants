@@ -5,8 +5,8 @@ Created on Oct 1, 2011
 '''
 from antpathsearch import aStarSearch
 
-EXPLORED_TURNS_MAX = 100
-EXPLORED_TURNS_STEP = 5
+EXPLORED_MAX = 100
+EXPLORED_STEP = 5
 FOG = 8
 
 class FeatureExtractor:
@@ -115,9 +115,8 @@ class AdvancedFeatures(FeatureExtractor):
             self.feature_names.append("Closest enemy "+str(x)+" away")
         self.feature_names.append("Closest enemy > "+str(x)+" away")
         
-        for x in range(EXPLORED_TURNS_STEP, EXPLORED_TURNS_MAX, EXPLORED_TURNS_STEP):
-            self.feature_names.append("Explored "+str(x)+" turns ago");
-        self.feature_names.append("Explored more than"+str(EXPLORED_TURNS_MAX)+" turns ago");
+        for x in range(EXPLORED_STEP, EXPLORED_MAX, EXPLORED_STEP):
+            self.feature_names.append("Area Explored "+str(x)+" times recently");
         
         
         
@@ -258,11 +257,10 @@ class AdvancedFeatures(FeatureExtractor):
         
         explored = state.get_visited(loc)
         if explored is None:
-            f += [False]*EXPLORED_TURNS_MAX/EXPLORED_TURNS_STEP+1
+            f += [False]*EXPLORED_MAX/EXPLORED_STEP
         else:
-            for k in range(EXPLORED_TURNS_STEP, EXPLORED_TURNS_MAX, EXPLORED_TURNS_STEP):
+            for k in range(EXPLORED_STEP, EXPLORED_MAX, EXPLORED_STEP):
                 f.append(explored <= k)
-            f.append(explored > EXPLORED_TURNS_MAX)
         
         return f
         

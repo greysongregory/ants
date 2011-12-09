@@ -20,9 +20,10 @@ import time
 LIVING_REWARD = -1
 FOOD_REWARD = 19
 DEATH_REWARD = -4
-KILL_REWARD = 14
+KILL_REWARD = 8
+EXPLORE_BONUS = 16
 RAZED_REWARD = 50
-HILL_DISTANCE_REWARD = 9
+HILL_DISTANCE_REWARD = 30
 FRIENDLY_HILL_RAZED_REWARD = -20
 EXPLORE_THRESHOLD = 10
 ALPHA_DIVIDER = 5
@@ -38,7 +39,7 @@ class QLearnBot(ValueBot):
         self.nturns = 0
         self.pathfinder = None
     
-    def get_reward(self,reward_state):
+    def get_reward(self, reward_state, ant):
         """ 
         Hand-tuned rewards for a state.  The RewardState reward_state tracks the
         following events for which you can tailor rewards:
@@ -49,6 +50,9 @@ class QLearnBot(ValueBot):
             reward_state.hill_distance: Fraction, 1/x
         """
         
+        explore_bonus =  1/(self.state.get_visited(ant.location)+1)
+        
+        
         print ":::::Reward Info::::"
         print "food_eaten: "+str(reward_state.food_eaten)
         print "was_killed: "+str(reward_state.was_killed)
@@ -56,7 +60,9 @@ class QLearnBot(ValueBot):
         print "hill_razed: "+str(reward_state.razed_hill)
         print "hill_distance: "+str(reward_state.hill_distance)
         print "friendly hill razed: "+str(reward_state.friendy_hill_razed)
+        print "exploration bonus: "+str(explore_bonus)
         print "::::::::::::::::::::"
+    
         
         reward = 0
         reward += LIVING_REWARD
@@ -66,6 +72,8 @@ class QLearnBot(ValueBot):
         reward += RAZED_REWARD*reward_state.razed_hill;
         reward += HILL_DISTANCE_REWARD*reward_state.hill_distance;
         reward += FRIENDLY_HILL_RAZED_REWARD*reward_state.friendy_hill_razed;
+        reward += EXPLORE_BONUS*explore_bonus;
+        
         return reward
         
     def set_pathfinder(self, pathfinder):
@@ -95,7 +103,7 @@ class QLearnBot(ValueBot):
         
         # Grid lookup resolution: size 10 squares
         if self.state == None:
-            fog = int(math.sqrt(self.world.viewradius2))
+            fog = int(math.sqrt(self.world.viewradius2)/2)
             self.state = GlobalState(self.world, visited_resolution=fog, resolution=fog)
         else:
             self.state.update()
@@ -141,7 +149,7 @@ class QLearnBot(ValueBot):
             return actions[0]
         # step 1, update Q(s,a) based on going from last state, taking
         # the action issued last round, and getting to current state
-        R = self.get_reward(ant.previous_reward_events)
+        R = self.get_reward(ant.previous_reward_events, ant)
         
         # step size.  it's good to make this inversely proportional to the
         # number of features, so you don't bounce out of the bowl we're trying
