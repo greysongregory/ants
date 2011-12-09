@@ -675,6 +675,11 @@ class Ants(Game):
             if len(nearby_players) == 1:
                 # gather food because there is only one player near the food
                 owner = nearby_players.pop()
+                
+                nearby_ants = self.nearby_ants(f_loc, self.spawnradius)
+                for ant in nearby_ants:
+                    ant.food_amt = Fraction(1,len(nearby_ants))
+                
                 self.remove_food(f_loc, owner)
             elif nearby_players:
                 # remove food because it is contested
