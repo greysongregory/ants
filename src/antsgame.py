@@ -740,6 +740,7 @@ class Ants(Game):
         return hill
 
     def raze_hill(self, hill, killed_by):
+        
         hill.end_turn = self.turn
         hill.killed_by = killed_by
         self.score[killed_by] += HILL_POINTS
@@ -802,6 +803,7 @@ class Ants(Game):
                 if ant.owner == hill.owner:
                     hill.last_touched = self.turn
                 elif hill.killed_by is None:
+                    ant.razed_hill = True
                     self.raze_hill(hill, ant.owner)
 
     def do_attack_damage(self):
@@ -1736,6 +1738,7 @@ class Ant:
         # extra event flags for rewards in reinforcement learning
         self.food_amt = 0
         self.kill_amt = 0
+        self.razed_hill = False
 
     def __str__(self):
         return '(%s, %s, %s, %s, %s)' % (self.initial_loc, self.owner, self.spawn_turn, self.die_turn, ''.join(self.orders))

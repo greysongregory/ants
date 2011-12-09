@@ -40,18 +40,21 @@ class QLearnBot(ValueBot):
             reward_state.food_eaten: Fraction of a food item this ant ate (between 0 and 1)
             reward_state.was_killed: boolean flag whether the ant died this turn
             reward_state.death_dealt: Fraction of responsibility this ant contributed to killing other ants (e.g., if 2 ants killed an enemy an, each would have death_dealt=1/2
+            reward_state.hill_razed: 
         """
-        died = 0
-        if reward_state.was_killed:
-            died = 1
+        
+        print ":::::Reward Info::::"
+        print "food_eaten: "+str(reward_state.food_eaten)
+        print "was_killed: "+str(reward_state.was_killed)
+        print "death_dealt: "+str(reward_state.death_dealt)
+        print "hill_razed: "+str(reward_state.razed_hill)
+        print "::::::::::::::::::::"
+        
         reward = 0
         reward += LIVING_REWARD
         reward += FOOD_REWARD*reward_state.food_eaten
-        reward += DEATH_REWARD*died
+        reward += DEATH_REWARD*reward_state.was_killed
         reward += KILL_REWARD*reward_state.death_dealt;
-        
-        print "reward  "
-        print reward
         return reward
         
     
