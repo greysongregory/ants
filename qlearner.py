@@ -78,8 +78,6 @@ class QLearnBot(ValueBot):
         
         # Grid lookup resolution: size 10 squares
         if self.state == None:
-            print "setting "
-            print self.world.viewradius2
             fog = int(math.sqrt(self.world.viewradius2))
             self.state = GlobalState(self.world, visited_resolution=fog, resolution=fog)
         else:
@@ -87,7 +85,6 @@ class QLearnBot(ValueBot):
             
         # explore or exploit and update values for every ant that's alive or was just killed
         for ant in self.world.ants:
-            print ant
             if ant.status == AntStatus.ALIVE or ant.previous_reward_events.was_killed:
                 ant.direction = self.explore_and_exploit(ant)
                 
@@ -103,8 +100,6 @@ class QLearnBot(ValueBot):
             Perform an update of the weights here according to the Q-learning
             weight update rule described in the homework handout.
         """
-        print "DDDDDDD"
-        print alpha
         for i in range(len(self.weights)):
             self.weights[i] += alpha*(reward + discount*maxval - prevval)*features[i]
         
@@ -114,22 +109,17 @@ class QLearnBot(ValueBot):
         Update weights and decide whether to explore or exploit here.  Where all the magic happens.
         YOUR CODE HERE
         '''
-        
-        print "DDDDDDDDDDDD"
 
         actions = self.world.get_passable_directions(ant.location, AIM.keys())
         random.shuffle(actions)
         if len(actions)==0:
             return 'halt'
-        print "DDDDDDDDDDDD"
         # if we have a newborn baby ant, init its rewards and quality fcns
         if 'prev_value' not in ant.__dict__:
-            print ant.__dict__
             ant.ant_id = 7
             ant.prev_value = 0
             ant.previous_reward_events = RewardEvents()
             ant.prev_features = self.features.extract(self.world, self.state, ant.location, actions[0])
-            print ant.__dict__
             return actions[0]
         print "DDDDDDDDDDDD"
         # step 1, update Q(s,a) based on going from last state, taking
