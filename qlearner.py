@@ -20,10 +20,11 @@ LIVING_REWARD = -1
 FOOD_REWARD = 19
 DEATH_REWARD = -4
 KILL_REWARD = 14
+RAZED_REWARD = 50
 EXPLORE_THRESHOLD = 10
 ALPHA_DIVIDER = 5
 DISCOUNT = .6
-PLAY_TYPE = 'play'
+PLAY_TYPE = 'batch'
 
 
 class QLearnBot(ValueBot):
@@ -55,6 +56,7 @@ class QLearnBot(ValueBot):
         reward += FOOD_REWARD*reward_state.food_eaten
         reward += DEATH_REWARD*reward_state.was_killed
         reward += KILL_REWARD*reward_state.death_dealt;
+        reward += RAZED_REWARD*reward_state.razed_hill;
         return reward
         
     
@@ -119,12 +121,10 @@ class QLearnBot(ValueBot):
             return 'halt'
         # if we have a newborn baby ant, init its rewards and quality fcns
         if 'prev_value' not in ant.__dict__:
-            ant.ant_id = 7
             ant.prev_value = 0
             ant.previous_reward_events = RewardEvents()
             ant.prev_features = self.features.extract(self.world, self.state, ant.location, actions[0])
             return actions[0]
-        print "DDDDDDDDDDDD"
         # step 1, update Q(s,a) based on going from last state, taking
         # the action issued last round, and getting to current state
         R = self.get_reward(ant.previous_reward_events)
