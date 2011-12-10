@@ -1,5 +1,4 @@
 Overview: Summary of the methods you use
-Empirical comparison against greedy bot (out of 100 games, how many does your bot win, or some other similar comparison metric)
 Description of bot's strengths
 Description bot's flaws (and how you might fix them if given more time)
 Anything else you want us to know about your submission
@@ -7,17 +6,26 @@ Anything else you want us to know about your submission
 	 The game of Ants is multidemensional with many factors to consider when designing an Antsbot. The number of those different factors for a bot to consider at any one time is nearly limitless, so we decided to break our strategy into just a few critical time frames within a game of Ants. The critical times that we identified include: ant spawning, exlporation (to find food, and enemy ant hills), food gathering, nearby enemy ants (when to flee, when to stand ground, when to move in for the kill), and enemy ant hill attacking. Though these were the points within the game we focused on, we considered other factors such as relying on A* path search. After we designed our strategy for these key points and realizing that it would be an incredible amount of logic to code, we decided to employ the q-learning priciple we learned in class. We felt that it would not only capture our ideas in the more efficent way, but it would also account for factors on a lower level through its training.
 	 Since we employed a q-learning approach to our bot, we spent most of our time writing qualifiers, defining related functionality, defining rewards, and patching the exsisting framework for the q-learning structure. Our first task was to write meaningful qualifiers that would translate into strategies that we talked about before going on to design our bot. We split up the qualifiers to write. Vin wrote qualifiers related to A* path search and exploration, while Grey wrote qualifiers related to enemy ants and food gathering. An example qulifier written for A* path is "Moving on A* Path Towards Closest Food", while an example for exploration is "explored x turns ago". Furthermore, an example for food gathering is "Is closest ant to closest food" while an example for dealing with enemy ants is "Is at Least Twice Enemy Army".
 	 Once we wrote our first draft of our qualifiers, we ran our bot only to find that the q-learning infrastructure that was in place for hw4 was broken on the hills branch, due to extensive changes in the code to add the new game constraints. We were tempted to begin writing a bot that used a different implementation strategy, but decided to try and patch the structure in place already. The patching consisted of us methodically going through the hw4 branch code and comparing it to the new hills code. Although patching took a bulk of our time to do, we were happy to finally get it working and see our bot training successfully. 
-	 Most of the methods we wrote for our bot came in the form of qualifiers. An overview of each will follow. Qualifiers of the form "Is *x* from attack" calculate how far an ant is from an enemy attack radius, where one means that the ant is a single move from being attacked (assuming the attack radius is unchanged).
+	 Most of the methods we wrote for our bot came in the form of qualifiers. An overview of each will follow. 
 
 
-	 
+
+
+
+
+class aStarSearch()
+      modified the get_path method and others to add caching to a*
+      paths expire after a while to ensure best paths are found	 
 class AdvancedFeatures(FeatureExtractor)
 	movingOnAStarPath(self, world, loc, next_loc, dest)
 		checks if an ant is moving on an a* path towards a destination (food, enemies, hills, etc)
 	extractVinFeatures(self, world, state, loc, action)
 		contains features relating to exploring new areas, moving on a* path, being close to food, enemies, hills, etc
 	extractBetterThanVinFeatures(self, world, state, loc, action)
-		grey is an idiot
+		Qualifiers of the form "Is *x* from attack" calculate how far an ant is from an enemy attack radius, where one means that the ant is a single move from being attacked (assuming the attack radius is unchanged).
+		There are also qualifies that compare nearby army sizes and returns whether friendly is larger or equal to the enemy's
+		Lastly, there are qualifiers that calculate whether there the current ant is closer to food than other friendly ants and enemy ants
+		
 
 class QLearnBot(ValueBot)		
 	get_reward(self, reward_state, ant)
@@ -41,3 +49,9 @@ class Ants(Game)
 class Ant()
 class AntWorld(object)
 	Modified numerous functions here to get qlearning to work again
+
+The bot's strengths lie with the fact that the q-learning algorithm takes into account many different factors and even some that we may not have even explicitly thought of while coding. 
+
+A weakness is the time required to run our bot. When many ants are currently on the world, calculations can take a bit of time, though we aren't sure where the bottleneck is. Most of our qualifiers look to be small in terms of calculation time. We suspect that the bottleneck is elsewhere in the code, and weren't able to find it.
+
+Unfortnuately, this slowdown made training hard to do in bulk. We allowed for some traing but ideally would have like more time to run more training to really see how the bot fared.
